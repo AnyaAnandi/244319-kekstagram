@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Аня Осипова](https://up.htmlacademy.ru/javascript/11/user/244319).
-* Наставник: `Неизвестно`.
+* Наставник: `Евгений Сорокин`.
 
 ---
 
