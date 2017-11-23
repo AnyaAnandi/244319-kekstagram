@@ -30,31 +30,18 @@ function getRandomLikes(min, max) {
 // условие не повторяемости картинок теряется ????
 
 function getRandomUrls() {
-var arr = [];
-var urls = [];
-
-for(var i = 1; i < size+1; i++) {
-    arr[i-1] = 'photos/'+[i]+'.jpg';
-}
-for(var i = 1; i < size+1; i++) {
-   var value =  arr.splice(Math.floor(Math.random() * ((arr.length-i)-1)+1), 1);
-   urls.push(value.pop());
-}
-return urls;
-}
-
-
-
-// функция для массива url  где не перемешиваются
-/*
-function getRandomUrls() {
   var arr = [];
-  for(var i = 1; i <= size; i++) {
+  var urls = [];
+
+  for (var i = 1; i < size + 1; i++) {
     arr[i - 1] = 'photos/' + [i] + '.jpg';
   }
-  return arr;
+  for (var k = 0; k < size; k++) {
+    var value = arr.splice(Math.floor(Math.random() * ((arr.length - k) - 1) + 1), 1);
+    urls.push(value.pop());
+  }
+  return urls;
 }
-*/
 
 // функция массив комментариве
 
@@ -65,29 +52,23 @@ function getRandomComments() {
   var randomComment = [];
 
   for (var n = 0; n < size; n++) {
-    var rand = Math.floor(Math.random()*comments.length);
+    var rand = Math.floor(Math.random() * comments.length);
     randomComment[n] = comments[rand];
   }
   return randomComment;
-  }
-  console.log(getRandomComments());
-
-
+}
 
 // общий массив из урл и лайков
 
 var pictures = [];
 
-for (var m = 0; m <=size; m++) {
+for (var m = 0; m <= size; m++) {
   pictures[m] = {
     url: getRandomUrls()[m],
     like: getRandomLikes(15, 200),
     comment: getRandomComments()[m]
   };
 }
-console.log(pictures);
-
-
 
 function renderPicture(arry) {
   var pictureElement = picturesTemplate.cloneNode(true);
