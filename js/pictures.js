@@ -26,18 +26,16 @@ function getRandomLikes(min, max) {
 }
 
 // функция для массива url где еще фото перемешиваются по порядку
-// если эту функцию далее вызвать в цикле по заполнению фрагмента, то
-// условие не повторяемости картинок теряется ????
 
-function getRandomUrls() {
-  var arr = [];
-  var urls = [];
+var arr = [];
+for (var i = 1; i < size + 1; i++) {
+  arr[i - 1] = 'photos/' + [i] + '.jpg';
+}
 
-  for (var i = 1; i < size + 1; i++) {
-    arr[i - 1] = 'photos/' + [i] + '.jpg';
-  }
+var urls = [];
+function getRandomUrls(a) {
   for (var k = 0; k < size; k++) {
-    var value = arr.splice(Math.floor(Math.random() * ((arr.length - k) - 1) + 1), 1);
+    var value = a.splice(Math.floor(Math.random() * ((a.length - k) - 1) + 1), 1);
     urls.push(value.pop());
   }
   return urls;
@@ -64,7 +62,7 @@ var pictures = [];
 
 for (var m = 0; m <= size; m++) {
   pictures[m] = {
-    url: getRandomUrls()[m],
+    url: getRandomUrls(arr)[m],
     like: getRandomLikes(15, 200),
     comment: getRandomComments()[m]
   };
