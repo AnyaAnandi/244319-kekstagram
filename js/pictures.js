@@ -19,52 +19,74 @@ var picturesTemplate = document.querySelector('#picture-template').content.query
 var gallaryOverlay = document.querySelector('.gallery-overlay');
 
 
-//  создаю массив лайков
+//  функция для массив лайков
 
 function getRandomLikes(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-var likes = [];
-for (var i = 0; i < 25; i++) {
-  likes[i] = getRandomLikes(15, 200);
-}
+// функция для массива url где еще фото перемешиваются по порядку
+// если эту функцию далее вызвать в цикле по заполнению фрагмента, то
+// условие не повторяемости картинок теряется ????
 
-
-// массив url так что бы фото в разнобой шли
-// ???? и итоге не подставляется 1 картинка ?????
-
+function getRandomUrls() {
 var arr = [];
 var urls = [];
 
-for (var k = 1; k <= size; k++) {
-  arr[k] = 'photos/' + [k] + '.jpg';
+for(var i = 1; i < size+1; i++) {
+    arr[i-1] = 'photos/'+[i]+'.jpg';
+}
+for(var i = 1; i < size+1; i++) {
+   var value =  arr.splice(Math.floor(Math.random() * ((arr.length-i)-1)+1), 1);
+   urls.push(value.pop());
+}
+return urls;
 }
 
 
-for (var l = 0; l <= size - 1; l++) {
-  var value = arr.splice(Math.floor(Math.random() * ((size - l) - 1) + 1), 1);
-  urls.push(value.pop());
+
+// функция для массива url  где не перемешиваются
+/*
+function getRandomUrls() {
+  var arr = [];
+  for(var i = 1; i <= size; i++) {
+    arr[i - 1] = 'photos/' + [i] + '.jpg';
+  }
+  return arr;
 }
+*/
+
+// функция массив комментариве
+
+function getRandomComments() {
+  var comments = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+  var randomComment = [];
+
+  for (var n = 0; n < size; n++) {
+    var rand = Math.floor(Math.random()*comments.length);
+    randomComment[n] = comments[rand];
+  }
+  return randomComment;
+  }
+  console.log(getRandomComments());
+
 
 
 // общий массив из урл и лайков
 
 var pictures = [];
 
-for (var m = 0; m <= size; m++) {
+for (var m = 0; m <=size; m++) {
   pictures[m] = {
-    url: urls[m],
-    like: likes[m]
+    url: getRandomUrls()[m],
+    like: getRandomLikes(15, 200),
+    comment: getRandomComments()[m]
   };
 }
+console.log(pictures);
 
-
-// массив комментариве
-
-/* var comments = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!']; */
 
 
 function renderPicture(arry) {
@@ -72,6 +94,7 @@ function renderPicture(arry) {
   var image = pictureElement.querySelector('img');
   image.setAttribute('src', arry.url);
   pictureElement.querySelector('.picture-likes').textContent = arry.like;
+  pictureElement.querySelector('.picture-comments').textContent = arry.comment;
   return pictureElement;
 }
 
