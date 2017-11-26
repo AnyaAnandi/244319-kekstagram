@@ -38,19 +38,23 @@ function shuffleArray(arr) {
   });
 }
 shuffleArray(urls);
-shuffleArray(comments);
-
 var commentsCount = getRandomNumber(1, 2);
-var randomComments = [];
-for (var k = 0; k < commentsCount; k++) {
-  randomComments[k] = comments[k];
+
+function getRandomComments(commentsArray) {
+  shuffleArray(commentsArray);
+  var randomComments = [];
+
+  for (var k = 0; k < commentsCount; k++) {
+    randomComments[k] = commentsArray[k];
+  }
+  return randomComments;
 }
 
 for (var m = 0; m <= size; m++) {
   pictures[m] = {
     url: urls[m],
     likes: getRandomNumber(15, 200),
-    comments: randomComments
+    comments: getRandomComments(comments)
   };
 }
 
