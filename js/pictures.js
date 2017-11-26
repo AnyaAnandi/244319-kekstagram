@@ -80,4 +80,3 @@ overlayImage.setAttribute('src', pictures[1].url);
 gallaryOverlay.querySelector('.likes-count').textContent = pictures[1].likes;
 gallaryOverlay.querySelector('.comments-count').textContent = pictures[1].comments.length;
 
-
