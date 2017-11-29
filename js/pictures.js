@@ -81,8 +81,8 @@ var pictureClose = document.querySelector('.gallery-overlay-close');
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
+
 function openGalleryOverlay(picture) {
-  event.preventDefault();
   galleryOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onGalleryEscPress);
 
@@ -104,12 +104,15 @@ function onGalleryEscPress(evt) {
 }
 
 for (var p = 0; p < pictureElement.length; p++) {
+
   (function (d) {
-    pictureElement[d].addEventListener('click', function () {
+    pictureElement[d].addEventListener('click', function (event) {
+      event.preventDefault();
       openGalleryOverlay(pictures[d]);
     });
 
-    pictureElement[d].addEventListener('keydown', function (evt) {
+    pictureElement[d].addEventListener('keydown', function (evt, event) {
+      event.preventDefault();
       if (evt.keyCode === ENTER_KEYCODE) {
         openGalleryOverlay(pictures[d]);
       }
@@ -126,4 +129,5 @@ pictureClose.addEventListener('keydown', function (evt) {
     closeGalleryOverlay();
   }
 });
+
 
