@@ -75,16 +75,22 @@ for (var j = 0; j < pictures.length; j++) {
 }
 picturesGallary.appendChild(fragment);
 
-var pictureOpen = document.querySelectorAll('.picture');
+var pictureElement = document.querySelectorAll('.picture');
 var pictureClose = document.querySelector('.gallery-overlay-close');
 
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
-function openGalleryOverlay() {
+function openGalleryOverlay(picture) {
   event.preventDefault();
   galleryOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onGalleryEscPress);
+
+  var overlayImage = galleryOverlay.querySelector('img');
+  overlayImage.setAttribute('src', picture.url);
+  galleryOverlay.querySelector('.likes-count').textContent = picture.likes;
+  galleryOverlay.querySelector('.comments-count').textContent = picture.comments.length;
+
 }
 
 function closeGalleryOverlay() {
@@ -97,24 +103,18 @@ function onGalleryEscPress(evt) {
   }
 }
 
-for (var p = 0; p < pictureOpen.length; p++) {
+for (var p = 0; p < pictureElement.length; p++) {
+  (function (d) {
+    pictureElement[d].addEventListener('click', function () {
+      openGalleryOverlay(pictures[d]);
+    });
 
-// заполнение gallery-overlay не получается по циклу
-
-  var overlayImage = galleryOverlay.querySelector('img');
-  overlayImage.setAttribute('src', pictures[p].url);
-  galleryOverlay.querySelector('.likes-count').textContent = pictures[p].likes;
-  galleryOverlay.querySelector('.comments-count').textContent = pictures[p].comments.length;
-
-  pictureOpen[p].addEventListener('click', function () {
-    openGalleryOverlay();
-  });
-
-  pictureOpen[p].addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openGalleryOverlay();
-    }
-  });
+    pictureElement[d].addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ENTER_KEYCODE) {
+        openGalleryOverlay(pictures[d]);
+      }
+    });
+  })(p);
 }
 
 pictureClose.addEventListener('click', function () {
