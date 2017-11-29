@@ -13,7 +13,7 @@ var picturesTemplate = document.querySelector('#picture-template').content.query
 
 // переменная всплывающего окна
 
-var gallaryOverlay = document.querySelector('.gallery-overlay');
+var galleryOverlay = document.querySelector('.gallery-overlay');
 
 var comments = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
@@ -38,9 +38,10 @@ function shuffleArray(arr) {
   });
 }
 shuffleArray(urls);
-var commentsCount = getRandomNumber(1, 2);
+
 
 function getRandomComments(commentsArray) {
+  var commentsCount = getRandomNumber(1, 2);
   shuffleArray(commentsArray);
   var randomComments = [];
 
@@ -50,7 +51,7 @@ function getRandomComments(commentsArray) {
   return randomComments;
 }
 
-for (var m = 0; m <= size; m++) {
+for (var m = 0; m < size; m++) {
   pictures[m] = {
     url: urls[m],
     likes: getRandomNumber(15, 200),
@@ -74,9 +75,19 @@ for (var j = 0; j < pictures.length; j++) {
 }
 picturesGallary.appendChild(fragment);
 
-gallaryOverlay.classList.remove('hidden');
-var overlayImage = gallaryOverlay.querySelector('img');
-overlayImage.setAttribute('src', pictures[1].url);
-gallaryOverlay.querySelector('.likes-count').textContent = pictures[1].likes;
-gallaryOverlay.querySelector('.comments-count').textContent = pictures[1].comments.length;
+
+/* galleryOverlay.classList.remove('hidden');
+var overlayImage = galleryOverlay.querySelector('img');
+overlayImage.setAttribute('src', pictures[0].url);
+galleryOverlay.querySelector('.likes-count').textContent = pictures[0].likes;
+galleryOverlay.querySelector('.comments-count').textContent = pictures[0].comments.length; */
+
+
+var picture = document.querySelector('.picture');
+
+
+picture.addEventListener('click', function () {
+  galleryOverlay.classList.remove('hidden');
+});
+
 
