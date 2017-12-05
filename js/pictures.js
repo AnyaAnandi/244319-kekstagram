@@ -239,15 +239,16 @@ var hashtags = document.querySelector('.upload-form-hashtags');
 
 function validate(hashtag) {
   var spaceForSplit = ' ';
-  var maxLength = 5;
+  var maxLength = 6;
   var hashtagsSplit = hashtag.split(spaceForSplit);
 
   var hashtagsMap = {};
+
   if (hashtagsSplit.length > maxLength) {
     return 'максимальное число хеш-тегов 5';
   }
 
-  for (var b = 0; b < hashtagsSplit.length; b++) {
+  for (var b = 0; b < hashtagsSplit.length - 1; b++) {
     hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
 
     if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
@@ -266,7 +267,6 @@ function validate(hashtag) {
   return false;
 }
 
-
 hashtags.addEventListener('keydown', function () {
   var error = validate(hashtags.value);
   if (error) {
@@ -274,24 +274,40 @@ hashtags.addEventListener('keydown', function () {
   }
 });
 
-
 var button = document.querySelector('#upload-submit');
 var form = document.querySelector('.upload-form');
 
+/* function cleanForm() {
+  form.value = '';
+} */
+
 button.addEventListener('click', function () {
+
   var error = validate(hashtags.value);
   if (error) {
     hashtags.setCustomValidity(error);
-    hashtags.style.outline = '2px solid red';
+    // hashtags.style.outline = '2px solid red';
+    hashtags.classList.add('red');
+    return;
   }
+
   form.submit();
+  form.reset();
+  hashtags.classList.remove('red');
+
 });
 
-/*
 button.addEventListener('click', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-
+    var error = validate(hashtags.value);
+    if (error) {
+      hashtags.setCustomValidity(error);
+      hashtags.style.outline = '2px solid red';
+      return;
+    }
+    form.submit();
+    form.reset();
+    hashtags.classList.remove('red');
   }
 });
-*/
 
