@@ -237,8 +237,6 @@ increasePicture.addEventListener('click', function () {
 
 var hashtags = document.querySelector('.upload-form-hashtags');
 
-
-
 function validate(hashtag) {
   var spaceForSplit = ' ';
   var maxLength = 5;
@@ -250,6 +248,7 @@ function validate(hashtag) {
   }
 
   for (var b = 0; b < hashtagsSplit.length; b++) {
+    hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
 
     if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
       return 'хеш-теги должены начинаться с #, разделены пробелом и состоять из одного слова';
@@ -262,7 +261,7 @@ function validate(hashtag) {
     if (hashtagsMap[hashtagsSplit[b]] === true) {
       return 'нельзя использовать одинаковые хеш-теги';
     } hashtagsMap[hashtagsSplit[b]] = true;
-    return ' ok';
+
   }
   return false;
 }
@@ -277,7 +276,7 @@ hashtags.addEventListener('keydown', function () {
 
 
 var button = document.querySelector('#upload-submit');
-// var form = document.querySelector('.upload-form');
+var form = document.querySelector('.upload-form');
 
 button.addEventListener('click', function () {
   var error = validate(hashtags.value);
@@ -285,7 +284,7 @@ button.addEventListener('click', function () {
     hashtags.setCustomValidity(error);
     hashtags.style.outline = '2px solid red';
   }
-// form.submit();
+  form.submit();
 });
 
 /*
@@ -293,6 +292,6 @@ button.addEventListener('click', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
 
   }
-}); */
-
+});
+*/
 
