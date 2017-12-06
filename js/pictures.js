@@ -183,7 +183,6 @@ function clearClassList(image) {
 var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
   'effect-phobos', 'effect-heat'];
 
-
 effects.addEventListener('click', function (e) {
   var effect = e.target.id.replace('upload-', '');
 
@@ -203,26 +202,30 @@ var minResizeValue = 25;
 
 resizeValue.value = defaultResizeValue + '%';
 
-function resetResizeValue(valueDefault) {
-  valueDefault = defaultResizeValue + '%';
-  var value = parseInt(valueDefault, 10);
+function resetResizeValue() {
+  resizeValue.value = defaultResizeValue + '%';
+  var value = parseInt(resizeValue.value, 10);
   var transformScaleReduce = value / 100;
   images.style.transform = 'scale(' + transformScaleReduce + ')';
-  resizeValue.value = valueDefault;
-  return valueDefault;
 }
 
 var effectsArray = document.querySelectorAll('input[name = effect]');
-function resetImageSize() {
+function resetImageFilter() {
   for (var b = 0; b < effectsArray.length; b++) {
-    if (effectsArray[b].id.lastIndexOf('-none') === 0) {
+    if (effectsArray[b].id.indexOf('-none') !== -1) {
       var effectDefault = effectsArray[b].id.replace('upload-', '');
-
     }
     clearClassList(images);
     images.classList.add(effectDefault);
   }
 }
+
+/* легкий вариант установить класс
+
+function resetImageFilter() {
+  clearClassList(images);
+  images.classList.add('effect-none');
+} */
 
 reducePicture.addEventListener('click', function () {
   var value = parseInt(resizeValue.value, 10) - resizeStep;
@@ -244,16 +247,12 @@ increasePicture.addEventListener('click', function () {
   images.style.transform = 'scale(' + transformScaleIncrease + ')';
 });
 
-
 var hashtags = document.querySelector('.upload-form-hashtags');
 
 function validate(hashtag) {
-
   var spaceForSplit = ' ';
   var maxLength = 5;
   var hashtagsSplit = hashtag.toLowerCase().split(spaceForSplit);
-
-
   var hashtagsMap = {};
 
   if (hashtagsSplit.length > maxLength) {
@@ -261,8 +260,6 @@ function validate(hashtag) {
   }
 
   for (var b = 0; b < hashtagsSplit.length; b++) {
-
-    // hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
 
     if (hashtagsSplit[b].lastIndexOf('') === 0) {
       return false;
@@ -297,19 +294,16 @@ var form = document.querySelector('.upload-form');
 
 submitButton.addEventListener('click', function (/* event */) {
   // event.preventDefault();
-  // event.stopPropagation();
   var error = validate(hashtags.value);
   if (error) {
     hashtags.setCustomValidity(error);
     hashtags.classList.add('red');
-    resetResizeValue(resizeValue.value);
     return;
   }
   form.submit();
-  resetResizeValue(resizeValue.value);
-  resetImageSize();
-
   hashtags.classList.remove('red');
+  resetResizeValue();
+  resetImageFilter();
 });
 
 submitButton.addEventListener('keydown', function (evt) {
@@ -322,7 +316,7 @@ submitButton.addEventListener('keydown', function (evt) {
     }
     form.submit();
     hashtags.classList.remove('red');
-    resetResizeValue(resizeValue.value);
-    resetImageSize();
+    resetResizeValue();
+    resetImageFilter();
   }
 });
