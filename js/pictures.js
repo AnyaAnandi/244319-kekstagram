@@ -184,11 +184,17 @@ var effectsArray = document.querySelectorAll('input[name =effect]');
 var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
   'effect-phobos', 'effect-heat'];
 
+
 effects.addEventListener('click', function (e) {
   for (var h = 0; h < effectsArray.length; h++) {
+
     if (e.target.id === effectsArray[h].id) {
-      clearClassList(images);
-      images.classList.add(effectsClasses[h]);
+      var effect = e.target.id.replace('upload-', '');
+
+      if (effectsClasses.indexOf(effect) !== -1) {
+        clearClassList(images);
+        images.classList.add(effect);
+      }
     }
   }
 });
@@ -228,7 +234,7 @@ var hashtags = document.querySelector('.upload-form-hashtags');
 
 function validate(hashtag) {
   var spaceForSplit = ' ';
-  var maxLength = 6;
+  var maxLength = 5;
   var hashtagsSplit = hashtag.split(spaceForSplit);
 
   var hashtagsMap = {};
@@ -237,7 +243,7 @@ function validate(hashtag) {
     return 'максимальное число хеш-тегов 5';
   }
 
-  for (var b = 0; b < hashtagsSplit.length - 1; b++) {
+  for (var b = 0; b <= hashtagsSplit.length - 1; b++) {
     hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
 
     if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
