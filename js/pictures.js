@@ -180,7 +180,7 @@ function clearClassList(image) {
       'effect-phobos', 'effect-heat');
 }
 
-var effectsArray = document.querySelectorAll('input[name =effect]');
+var effectsArray = document.querySelectorAll('input[name = effect]');
 var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
   'effect-phobos', 'effect-heat'];
 
@@ -199,6 +199,7 @@ effects.addEventListener('click', function (e) {
   }
 });
 
+
 var reducePicture = document.querySelector('.upload-resize-controls-button-dec');
 var increasePicture = document.querySelector('.upload-resize-controls-button-inc');
 var resizeValue = document.querySelector('.upload-resize-controls-value');
@@ -208,6 +209,17 @@ var maxResizeValue = 100;
 var minResizeValue = 25;
 
 resizeValue.value = defaultResizeValue + '%';
+
+function resetForm() {
+  resizeValue.value = defaultResizeValue + '%';
+  var value = parseInt(resizeValue.value, 10);
+  var transformScaleReduce = value / 100;
+  images.style.transform = 'scale(' + transformScaleReduce + ')';
+
+  var effectDefault = 'effect-none';
+  clearClassList(images);
+  images.classList.add(effectDefault);
+}
 
 reducePicture.addEventListener('click', function () {
   var value = parseInt(resizeValue.value, 10) - resizeStep;
@@ -243,7 +255,7 @@ function validate(hashtag) {
     return 'максимальное число хеш-тегов 5';
   }
 
-  for (var b = 0; b <= hashtagsSplit.length - 1; b++) {
+  for (var b = 0; b < hashtagsSplit.length - 1; b++) {
     hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
 
     if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
@@ -257,9 +269,9 @@ function validate(hashtag) {
     if (hashtagsMap[hashtagsSplit[b]] === true) {
       return 'нельзя использовать одинаковые хеш-теги';
     } hashtagsMap[hashtagsSplit[b]] = true;
-
   }
   return false;
+
 }
 
 hashtags.addEventListener('keydown', function () {
@@ -274,10 +286,6 @@ hashtags.addEventListener('keydown', function () {
 var button = document.querySelector('#upload-submit');
 var form = document.querySelector('.upload-form');
 
-/* function cleanForm() {
-  form.value = '';
-} */
-
 button.addEventListener('click', function () {
   var error = validate(hashtags.value);
   if (error) {
@@ -286,10 +294,8 @@ button.addEventListener('click', function () {
     hashtags.classList.add('red');
     return;
   }
-
   form.submit();
-  form.reset();
-
+  resetForm();
   hashtags.classList.remove('red');
 });
 
@@ -302,8 +308,7 @@ button.addEventListener('click', function (evt) {
       return;
     }
     form.submit();
-    form.reset();
     hashtags.classList.remove('red');
+    resetForm();
   }
 });
-
