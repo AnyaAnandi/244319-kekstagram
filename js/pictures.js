@@ -210,9 +210,9 @@ var minResizeValue = 25;
 
 resizeValue.value = defaultResizeValue + '%';
 
-function resetForm() {
-  resizeValue.value = defaultResizeValue + '%';
-  var value = parseInt(resizeValue.value, 10);
+function resetForm(valueDefault) {
+  valueDefault = defaultResizeValue + '%';
+  var value = parseInt(valueDefault, 10);
   var transformScaleReduce = value / 100;
   images.style.transform = 'scale(' + transformScaleReduce + ')';
 
@@ -295,7 +295,7 @@ button.addEventListener('click', function () {
     return;
   }
   form.submit();
-  resetForm();
+  resetForm(resizeValue.value);
   hashtags.classList.remove('red');
 });
 
@@ -309,6 +309,6 @@ button.addEventListener('click', function (evt) {
     }
     form.submit();
     hashtags.classList.remove('red');
-    resetForm();
+    resetForm(resizeValue.value);
   }
 });
