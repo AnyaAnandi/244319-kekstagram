@@ -279,7 +279,6 @@ var form = document.querySelector('.upload-form');
 } */
 
 button.addEventListener('click', function () {
-
   var error = validate(hashtags.value);
   if (error) {
     hashtags.setCustomValidity(error);
