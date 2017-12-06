@@ -267,6 +267,8 @@ hashtags.addEventListener('keydown', function () {
   if (error) {
     hashtags.setCustomValidity(error);
   }
+  hashtags.classList.remove('red');
+  return;
 });
 
 var button = document.querySelector('#upload-submit');
@@ -290,7 +292,6 @@ button.addEventListener('click', function () {
   form.reset();
 
   hashtags.classList.remove('red');
-
 });
 
 button.addEventListener('click', function (evt) {
