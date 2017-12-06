@@ -180,25 +180,18 @@ function clearClassList(image) {
       'effect-phobos', 'effect-heat');
 }
 
-var effectsArray = document.querySelectorAll('input[name = effect]');
 var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
   'effect-phobos', 'effect-heat'];
 
 
 effects.addEventListener('click', function (e) {
-  for (var h = 0; h < effectsArray.length; h++) {
+  var effect = e.target.id.replace('upload-', '');
 
-    if (e.target.id === effectsArray[h].id) {
-      var effect = e.target.id.replace('upload-', '');
-
-      if (effectsClasses.indexOf(effect) !== -1) {
-        clearClassList(images);
-        images.classList.add(effect);
-      }
-    }
+  if (effectsClasses.indexOf(effect) !== -1) {
+    clearClassList(images);
+    images.classList.add(effect);
   }
 });
-
 
 var reducePicture = document.querySelector('.upload-resize-controls-button-dec');
 var increasePicture = document.querySelector('.upload-resize-controls-button-inc');
@@ -210,15 +203,25 @@ var minResizeValue = 25;
 
 resizeValue.value = defaultResizeValue + '%';
 
-function resetForm(valueDefault) {
+function resetResizeValue(valueDefault) {
   valueDefault = defaultResizeValue + '%';
   var value = parseInt(valueDefault, 10);
   var transformScaleReduce = value / 100;
   images.style.transform = 'scale(' + transformScaleReduce + ')';
+  resizeValue.value = valueDefault;
+  return valueDefault;
+}
 
-  var effectDefault = 'effect-none';
-  clearClassList(images);
-  images.classList.add(effectDefault);
+var effectsArray = document.querySelectorAll('input[name = effect]');
+function resetImageSize() {
+  for (var b = 0; b < effectsArray.length; b++) {
+    if (effectsArray[b].id.lastIndexOf('-none') === 0) {
+      var effectDefault = effectsArray[b].id.replace('upload-', '');
+
+    }
+    clearClassList(images);
+    images.classList.add(effectDefault);
+  }
 }
 
 reducePicture.addEventListener('click', function () {
@@ -245,9 +248,11 @@ increasePicture.addEventListener('click', function () {
 var hashtags = document.querySelector('.upload-form-hashtags');
 
 function validate(hashtag) {
+
   var spaceForSplit = ' ';
   var maxLength = 5;
-  var hashtagsSplit = hashtag.split(spaceForSplit);
+  var hashtagsSplit = hashtag.toLowerCase().split(spaceForSplit);
+
 
   var hashtagsMap = {};
 
@@ -255,8 +260,13 @@ function validate(hashtag) {
     return 'максимальное число хеш-тегов 5';
   }
 
-  for (var b = 0; b < hashtagsSplit.length - 1; b++) {
-    hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
+  for (var b = 0; b < hashtagsSplit.length; b++) {
+
+    // hashtagsSplit[b] = hashtagsSplit[b].toLowerCase();
+
+    if (hashtagsSplit[b].lastIndexOf('') === 0) {
+      return false;
+    }
 
     if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
       return 'хеш-теги должены начинаться с #, разделены пробелом и состоять из одного слова';
@@ -271,7 +281,6 @@ function validate(hashtag) {
     } hashtagsMap[hashtagsSplit[b]] = true;
   }
   return false;
-
 }
 
 hashtags.addEventListener('keydown', function () {
@@ -283,23 +292,27 @@ hashtags.addEventListener('keydown', function () {
   return;
 });
 
-var button = document.querySelector('#upload-submit');
+var submitButton = document.querySelector('#upload-submit');
 var form = document.querySelector('.upload-form');
 
-button.addEventListener('click', function () {
+submitButton.addEventListener('click', function (/* event */) {
+  // event.preventDefault();
+  // event.stopPropagation();
   var error = validate(hashtags.value);
   if (error) {
     hashtags.setCustomValidity(error);
-    // hashtags.style.outline = '2px solid red';
     hashtags.classList.add('red');
+    resetResizeValue(resizeValue.value);
     return;
   }
   form.submit();
-  resetForm(resizeValue.value);
+  resetResizeValue(resizeValue.value);
+  resetImageSize();
+
   hashtags.classList.remove('red');
 });
 
-button.addEventListener('click', function (evt) {
+submitButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     var error = validate(hashtags.value);
     if (error) {
@@ -309,6 +322,7 @@ button.addEventListener('click', function (evt) {
     }
     form.submit();
     hashtags.classList.remove('red');
-    resetForm(resizeValue.value);
+    resetResizeValue(resizeValue.value);
+    resetImageSize();
   }
 });
