@@ -142,8 +142,8 @@ function closeUploadForm() {
   uploadFileForm.classList.add('hidden');
 }
 
-function onUploadFormEscPress(evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
+function onUploadFileFormClose(evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
     closeUploadForm();
   }
 }
@@ -151,10 +151,7 @@ function onUploadFormEscPress(evt) {
 uploadFileFeeld.addEventListener('change', function (event) {
   uploadFileForm.classList.remove('hidden');
   event.stopPropagation();
-
-  document.addEventListener('keydown', onUploadFormEscPress);
 });
-
 
 var commentOnFocus = document.querySelector('.upload-form-description');
 
@@ -166,11 +163,7 @@ commentOnFocus.addEventListener('keydown', function (event) {
 
 uploadFileFormClose.addEventListener('click', closeUploadForm);
 
-uploadFileFormClose.addEventListener('click', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    closeUploadForm();
-  }
-});
+uploadFileFormClose.addEventListener('keydown', onUploadFileFormClose);
 
 var images = document.querySelector('.effect-image-preview');
 var effects = document.querySelector('.upload-effect');
@@ -200,32 +193,16 @@ var resizeStep = 25;
 var maxResizeValue = 100;
 var minResizeValue = 25;
 
-resizeValue.value = defaultResizeValue + '%';
-
 function resetResizeValue() {
   resizeValue.value = defaultResizeValue + '%';
-  var value = parseInt(resizeValue.value, 10);
-  var transformScaleReduce = value / 100;
+  var transformScaleReduce = defaultResizeValue / 100;
   images.style.transform = 'scale(' + transformScaleReduce + ')';
 }
-
-var effectsArray = document.querySelectorAll('input[name = effect]');
-function resetImageFilter() {
-  for (var b = 0; b < effectsArray.length; b++) {
-    if (effectsArray[b].id.indexOf('-none') !== -1) {
-      var effectDefault = effectsArray[b].id.replace('upload-', '');
-    }
-    clearClassList(images);
-    images.classList.add(effectDefault);
-  }
-}
-
-/* легкий вариант установить класс
 
 function resetImageFilter() {
   clearClassList(images);
   images.classList.add('effect-none');
-} */
+}
 
 reducePicture.addEventListener('click', function () {
   var value = parseInt(resizeValue.value, 10) - resizeStep;
@@ -252,7 +229,9 @@ var hashtags = document.querySelector('.upload-form-hashtags');
 function validate(hashtag) {
   var spaceForSplit = ' ';
   var maxLength = 5;
-  var hashtagsSplit = hashtag.toLowerCase().split(spaceForSplit);
+  var hashtagsSplit = hashtag.toLowerCase().split(spaceForSplit).filter(function (e) {
+    return e !== '';
+  });
   var hashtagsMap = {};
 
   if (hashtagsSplit.length > maxLength) {
@@ -260,10 +239,6 @@ function validate(hashtag) {
   }
 
   for (var b = 0; b < hashtagsSplit.length; b++) {
-
-    if (hashtagsSplit[b].lastIndexOf('') === 0) {
-      return false;
-    }
 
     if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
       return 'хеш-теги должены начинаться с #, разделены пробелом и состоять из одного слова';
@@ -284,16 +259,16 @@ hashtags.addEventListener('keydown', function () {
   var error = validate(hashtags.value);
   if (error) {
     hashtags.setCustomValidity(error);
+    hashtags.classList.add('red');
+    return;
   }
   hashtags.classList.remove('red');
-  return;
 });
 
 var submitButton = document.querySelector('#upload-submit');
 var form = document.querySelector('.upload-form');
 
-submitButton.addEventListener('click', function (/* event */) {
-  // event.preventDefault();
+submitButton.addEventListener('click', function () {
   var error = validate(hashtags.value);
   if (error) {
     hashtags.setCustomValidity(error);
@@ -302,6 +277,7 @@ submitButton.addEventListener('click', function (/* event */) {
   }
   form.submit();
   hashtags.classList.remove('red');
+  form.reset();
   resetResizeValue();
   resetImageFilter();
 });
@@ -311,11 +287,12 @@ submitButton.addEventListener('keydown', function (evt) {
     var error = validate(hashtags.value);
     if (error) {
       hashtags.setCustomValidity(error);
-      hashtags.style.outline = '2px solid red';
+      hashtags.classList.add('red');
       return;
     }
     form.submit();
     hashtags.classList.remove('red');
+    form.reset();
     resetResizeValue();
     resetImageFilter();
   }
