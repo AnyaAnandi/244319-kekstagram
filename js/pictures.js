@@ -129,3 +129,171 @@ pictureClose.addEventListener('keydown', function (evt) {
     closeGalleryOverlay();
   }
 });
+
+// ///////////// module4 - task2 ////////////////////////
+
+var uploadFileFeeld = document.querySelector('#upload-file');
+
+var uploadFileForm = document.querySelector('.upload-overlay');
+
+var uploadFileFormClose = document.querySelector('.upload-form-cancel');
+
+function closeUploadForm() {
+  uploadFileForm.classList.add('hidden');
+}
+
+function onUploadFileFormClose(evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closeUploadForm();
+  }
+}
+
+uploadFileFeeld.addEventListener('change', function (event) {
+  uploadFileForm.classList.remove('hidden');
+  event.stopPropagation();
+});
+
+var commentOnFocus = document.querySelector('.upload-form-description');
+
+commentOnFocus.addEventListener('keydown', function (event) {
+  if (event.keyCode === ESC_KEYCODE) {
+    event.stopPropagation();
+  }
+});
+
+uploadFileFormClose.addEventListener('click', closeUploadForm);
+
+uploadFileFormClose.addEventListener('keydown', onUploadFileFormClose);
+
+var images = document.querySelector('.effect-image-preview');
+var effects = document.querySelector('.upload-effect');
+
+function clearClassList(image) {
+  image.classList.remove('effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
+      'effect-phobos', 'effect-heat');
+}
+
+var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
+  'effect-phobos', 'effect-heat'];
+
+effects.addEventListener('click', function (e) {
+  var effect = e.target.id.replace('upload-', '');
+
+  if (effectsClasses.indexOf(effect) !== -1) {
+    clearClassList(images);
+    images.classList.add(effect);
+  }
+});
+
+var reducePicture = document.querySelector('.upload-resize-controls-button-dec');
+var increasePicture = document.querySelector('.upload-resize-controls-button-inc');
+var resizeValue = document.querySelector('.upload-resize-controls-value');
+var defaultResizeValue = 100;
+var resizeStep = 25;
+var maxResizeValue = 100;
+var minResizeValue = 25;
+
+function resetResizeValue() {
+  resizeValue.value = defaultResizeValue + '%';
+  var transformScaleReduce = defaultResizeValue / 100;
+  images.style.transform = 'scale(' + transformScaleReduce + ')';
+}
+
+function resetImageFilter() {
+  clearClassList(images);
+  images.classList.add('effect-none');
+}
+
+reducePicture.addEventListener('click', function () {
+  var value = parseInt(resizeValue.value, 10) - resizeStep;
+  if (value < minResizeValue) {
+    return;
+  }
+  resizeValue.value = value + '%';
+  var transformScaleReduce = value / 100;
+  images.style.transform = 'scale(' + transformScaleReduce + ')';
+});
+
+increasePicture.addEventListener('click', function () {
+  var value = parseInt(resizeValue.value, 10) + resizeStep;
+  if (value > maxResizeValue) {
+    return;
+  }
+  resizeValue.value = value + '%';
+  var transformScaleIncrease = value / 100;
+  images.style.transform = 'scale(' + transformScaleIncrease + ')';
+});
+
+var hashtags = document.querySelector('.upload-form-hashtags');
+
+function validate(hashtag) {
+  var spaceForSplit = ' ';
+  var maxLength = 5;
+  var hashtagsSplit = hashtag.toLowerCase().split(spaceForSplit).filter(function (e) {
+    return e !== '';
+  });
+  var hashtagsMap = {};
+
+  if (hashtagsSplit.length > maxLength) {
+    return 'максимальное число хеш-тегов 5';
+  }
+
+  for (var b = 0; b < hashtagsSplit.length; b++) {
+
+    if (hashtagsSplit[b].lastIndexOf('#') !== 0) {
+      return 'хеш-теги должены начинаться с #, разделены пробелом и состоять из одного слова';
+    }
+
+    if (hashtagsSplit[b].length > 20) {
+      return 'максимальная длина одного хеш-тега 20 символов';
+    }
+
+    if (hashtagsMap[hashtagsSplit[b]] === true) {
+      return 'нельзя использовать одинаковые хеш-теги';
+    } hashtagsMap[hashtagsSplit[b]] = true;
+  }
+  return false;
+}
+
+hashtags.addEventListener('keydown', function () {
+  var error = validate(hashtags.value);
+  if (error) {
+    hashtags.setCustomValidity(error);
+    hashtags.classList.add('red');
+    return;
+  }
+  hashtags.classList.remove('red');
+});
+
+var submitButton = document.querySelector('#upload-submit');
+var form = document.querySelector('.upload-form');
+
+submitButton.addEventListener('click', function () {
+  var error = validate(hashtags.value);
+  if (error) {
+    hashtags.setCustomValidity(error);
+    hashtags.classList.add('red');
+    return;
+  }
+  form.submit();
+  hashtags.classList.remove('red');
+  form.reset();
+  resetResizeValue();
+  resetImageFilter();
+});
+
+submitButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    var error = validate(hashtags.value);
+    if (error) {
+      hashtags.setCustomValidity(error);
+      hashtags.classList.add('red');
+      return;
+    }
+    form.submit();
+    hashtags.classList.remove('red');
+    form.reset();
+    resetResizeValue();
+    resetImageFilter();
+  }
+});
