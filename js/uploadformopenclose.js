@@ -20,9 +20,9 @@
     window.openclose.isEnterPress(evt, window.openclose.closeUploadForm);
   });
 
-  document.addEventListener('keydown', function (evt) {
+  /* document.addEventListener('keydown', function (evt) {
     window.openclose.isEscPress(evt, window.openclose.closeUploadForm());
-  });
+  }); */
 
   commentOnFocus.addEventListener('keydown', function (evt) {
     evt.stopPropagation();
