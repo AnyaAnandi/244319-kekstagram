@@ -1,4 +1,5 @@
 'use strict';
+
 // размер массива
 
 var size = 25;
@@ -297,3 +298,4 @@ submitButton.addEventListener('keydown', function (evt) {
     resetImageFilter();
   }
 });
+
