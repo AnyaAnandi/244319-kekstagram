@@ -141,8 +141,8 @@ body {
 
 .upload-effect-label-marvin .upload-effect-preview,
 .effect-marvin {
-  -webkit-filter: invert(100%);
-          filter: invert(100%);
+  -webkit-filter: invert(100);
+          filter: invert(100);
 }
 
 .upload-effect-label-phobos .upload-effect-preview,
@@ -211,6 +211,7 @@ body {
 }
 
 .upload-form-cancel {
+  font-size: 0;
   position: absolute;
   top: 0;
   left: 100%;

@@ -112,9 +112,9 @@ for (var p = 0; p < pictureElements.length; p++) {
       document.addEventListener('keydown', onGalleryEscPress);
     });
 
-    pictureElements[d].addEventListener('keydown', function (evt, event) {
-      event.preventDefault();
-      if (evt.keyCode === ENTER_KEYCODE) {
+    pictureElements[d].addEventListener('keydown', function (event) {
+      // event.preventDefault();
+      if (event.keyCode === ENTER_KEYCODE) {
         openGalleryOverlay(pictures[d]);
       }
     });
@@ -154,6 +154,18 @@ uploadFileFeeld.addEventListener('change', function (event) {
   event.stopPropagation();
 });
 
+
+document.addEventListener('keydown', function (e) {
+  if (e.keyCode === ESC_KEYCODE) {
+    closeUploadForm();
+    hashtags.classList.remove('red');
+    form.reset();
+    resetResizeValue();
+    resetImageFilter();
+    images.style.filter = 'none';
+  }
+});
+
 var commentOnFocus = document.querySelector('.upload-form-description');
 
 commentOnFocus.addEventListener('keydown', function (event) {
@@ -178,11 +190,21 @@ var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-ma
   'effect-phobos', 'effect-heat'];
 
 effects.addEventListener('click', function (e) {
-  var effect = e.target.id.replace('upload-', '');
+  window.effect = e.target.id.replace('upload-', '');
 
-  if (effectsClasses.indexOf(effect) !== -1) {
+  if (effectsClasses.indexOf(window.effect) !== -1) {
     clearClassList(images);
-    images.classList.add(effect);
+    images.classList.add(window.effect);
+    pinHandle.style.left = 0;
+    filterBar.style.width = 0;
+    rangeInput.value = 0;
+    images.style.filter = 'none';
+
+    if (window.effect !== 'effect-none') {
+      filter.classList.remove('hidden');
+    } else {
+      filter.classList.add('hidden');
+    }
   }
 });
 
@@ -203,6 +225,7 @@ function resetResizeValue() {
 function resetImageFilter() {
   clearClassList(images);
   images.classList.add('effect-none');
+  filter.classList.add('hidden');
 }
 
 reducePicture.addEventListener('click', function () {
@@ -281,6 +304,7 @@ submitButton.addEventListener('click', function () {
   form.reset();
   resetResizeValue();
   resetImageFilter();
+  images.style.filter = 'none';
 });
 
 submitButton.addEventListener('keydown', function (evt) {
@@ -297,5 +321,77 @@ submitButton.addEventListener('keydown', function (evt) {
     resetResizeValue();
     resetImageFilter();
   }
+});
+
+// ползунок
+
+var filter = document.querySelector('.upload-effect-level');
+var pinHandle = document.querySelector('.upload-effect-level-pin');
+var filterBar = document.querySelector('.upload-effect-level-val');
+var rangeInput = document.querySelector('.upload-effect-level-value');
+
+function getCoords(elem) {
+  var box = elem.getBoundingClientRect();
+
+  return {
+    top: box.top + pageYOffset,
+    left: box.left + pageXOffset
+  };
+}
+
+pinHandle.addEventListener('mousedown', function (e) {
+  e.preventDefault();
+  var pinCoords = getCoords(pinHandle);
+  var shiftX = e.pageX - pinCoords.left;
+  var filterCoords = getCoords(filter);
+
+  function onMouseMove(evt) {
+    evt.preventDefault();
+    var newLeft = evt.pageX - shiftX - filterCoords.left;
+
+    if (newLeft < 0) {
+      newLeft = 0;
+    }
+    var rightEdge = filter.offsetWidth - pinHandle.offsetWidth - 20;
+    if (newLeft > rightEdge) {
+      newLeft = rightEdge;
+    }
+
+    pinHandle.style.left = newLeft + 'px';
+    filterBar.style.width = newLeft + 'px';
+    rangeInput.value = parseInt((newLeft * 100) / rightEdge, 10);
+
+    if (window.effect === 'effect-chrome') {
+      rangeInput.value = rangeInput.value / 100;
+      images.style.filter = 'grayscale(' + rangeInput.value + ')';
+    }
+    if (window.effect === 'effect-sepia') {
+      rangeInput.value = rangeInput.value / 100;
+      images.style.filter = 'sepia(' + rangeInput.value + ')';
+    }
+    if (window.effect === 'effect-marvin') {
+      images.style.filter = 'invert(' + rangeInput.value + '%)';
+    }
+    if (window.effect === 'effect-phobos') {
+      rangeInput.value = parseFloat(rangeInput.value / 20, 10).toFixed(1);
+
+      images.style.filter = 'blur(' + rangeInput.value + 'px)';
+    }
+    if (window.effect === 'effect-heat') {
+      rangeInput.value = parseFloat(rangeInput.value / 33, 10).toFixed(1);
+      images.style.filter = 'brightness(' + rangeInput.value + ')';
+    }
+  }
+
+  function onMouseUp(upEvt) {
+    upEvt.preventDefault();
+
+    filter.removeEventListener('mousemove', onMouseMove);
+    filter.removeEventListener('mouseup', onMouseUp);
+  }
+
+  filter.addEventListener('mousemove', onMouseMove);
+  filter.addEventListener('mouseup', onMouseUp);
+
 });
 
