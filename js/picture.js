@@ -1,11 +1,12 @@
 'use strict';
 
 (function () {
+  var picturesTemplate = document.querySelector('#picture-template').content.querySelector('.picture');
 
   window.picture = {
 
-    renderPicture: function (picture) {
-      var pictureElement = window.picturesTemplate.cloneNode(true);
+    render: function (picture) {
+      var pictureElement = picturesTemplate.cloneNode(true);
       var image = pictureElement.querySelector('img');
       image.setAttribute('src', picture.url);
       pictureElement.querySelector('.picture-likes').textContent = picture.likes;
