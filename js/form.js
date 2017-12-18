@@ -6,6 +6,9 @@
 
   function closeUploadForm() {
     uploadFileForm.classList.add('hidden');
+    window.initializeScale.resetResizeValue();
+    resetImageFilter();
+    images.style.filter = 'none';
   }
 
   function onUploadFileFormClose(evt) {
@@ -24,7 +27,7 @@
       closeUploadForm();
       hashtags.classList.remove('red');
       form.reset();
-      resetResizeValue();
+      window.initializeScale.resetResizeValue();
       resetImageFilter();
       images.style.filter = 'none';
     }
@@ -71,45 +74,18 @@
     }
   });
 
-  var reducePicture = document.querySelector('.upload-resize-controls-button-dec');
-  var increasePicture = document.querySelector('.upload-resize-controls-button-inc');
-  var resizeValue = document.querySelector('.upload-resize-controls-value');
-  var defaultResizeValue = 100;
-  var resizeStep = 25;
-  var maxResizeValue = 100;
-  var minResizeValue = 25;
+  var scalePicture = document.querySelector('.upload-resize-controls');
+  window.reducePicture = document.querySelector('.upload-resize-controls-button-dec');
+  window.increasePicture = document.querySelector('.upload-resize-controls-button-inc');
+  window.resizeValue = document.querySelector('.upload-resize-controls-value');
 
-  function resetResizeValue() {
-    resizeValue.value = defaultResizeValue + '%';
-    var transformScaleReduce = defaultResizeValue / 100;
-    images.style.transform = 'scale(' + transformScaleReduce + ')';
-  }
-
-  function resetImageFilter() {
-    clearClassList(images);
-    images.classList.add('effect-none');
-    filter.classList.add('hidden');
-  }
-
-  reducePicture.addEventListener('click', function () {
-    var value = parseInt(resizeValue.value, 10) - resizeStep;
-    if (value < minResizeValue) {
-      return;
+  window.scaleImage = {
+    scale: function (val) {
+      images.style.transform = 'scale(' + val / 100 + ')';
     }
-    resizeValue.value = value + '%';
-    var transformScaleReduce = value / 100;
-    images.style.transform = 'scale(' + transformScaleReduce + ')';
-  });
+  };
 
-  increasePicture.addEventListener('click', function () {
-    var value = parseInt(resizeValue.value, 10) + resizeStep;
-    if (value > maxResizeValue) {
-      return;
-    }
-    resizeValue.value = value + '%';
-    var transformScaleIncrease = value / 100;
-    images.style.transform = 'scale(' + transformScaleIncrease + ')';
-  });
+  window.initializeScale.scale(scalePicture);
 
   var hashtags = document.querySelector('.upload-form-hashtags');
 
@@ -152,6 +128,52 @@
     hashtags.classList.remove('red');
   });
 
+  // ползунок
+
+  var filter = document.querySelector('.upload-effect-level');
+  var pinHandle = document.querySelector('.upload-effect-level-pin');
+  var filterBar = document.querySelector('.upload-effect-level-val');
+  var rangeInput = document.querySelector('.upload-effect-level-value');
+  filter.classList.add('hidden');
+
+  window.filtersStyle = {
+    styles: function (val) {
+      switch (window.effect) {
+        case 'effect-chrome':
+          val.value = val.value / 100;
+          images.style.filter = 'grayscale(' + val.value + ')';
+          break;
+
+        case 'effect-sepia':
+          val.value = val.value / 100;
+          images.style.filter = 'sepia(' + val.value + ')';
+          break;
+
+        case 'effect-marvin':
+          images.style.filter = 'invert(' + val.value + '%)';
+          break;
+
+        case 'effect-phobos':
+          val.value = parseFloat(val.value / 20, 10).toFixed(1);
+          images.style.filter = 'blur(' + val.value + 'px)';
+          break;
+
+        case 'effect-heat':
+          val.value = parseFloat(val.value / 33, 10).toFixed(1);
+          images.style.filter = 'brightness(' + val.value + ')';
+          break;
+      }
+    }
+  };
+
+  window.initializeFilters.onFiltersChange(pinHandle, filter, filterBar, rangeInput);
+
+  function resetImageFilter() {
+    clearClassList(images);
+    images.classList.add('effect-none');
+    filter.classList.add('hidden');
+  }
+
   var submitButton = document.querySelector('#upload-submit');
   var form = document.querySelector('.upload-form');
 
@@ -165,11 +187,10 @@
     form.submit();
     hashtag.classList.remove('red');
     form.reset();
-    resetResizeValue();
+    window.initializeScale.resetResizeValue();
     resetImageFilter();
     images.style.filter = 'none';
   }
-
 
   submitButton.addEventListener('click', function () {
     showErrorOrSubmit(hashtags);
@@ -181,82 +202,5 @@
     }
   });
 
-  // ползунок
-
-  var filter = document.querySelector('.upload-effect-level');
-  var pinHandle = document.querySelector('.upload-effect-level-pin');
-  var filterBar = document.querySelector('.upload-effect-level-val');
-  var rangeInput = document.querySelector('.upload-effect-level-value');
-  filter.classList.add('hidden');
-
-  function getCoords(elem) {
-    var box = elem.getBoundingClientRect();
-
-    return {
-      top: box.top + pageYOffset,
-      left: box.left + pageXOffset
-    };
-  }
-
-  pinHandle.addEventListener('mousedown', function (e) {
-    e.preventDefault();
-    var pinCoords = getCoords(pinHandle);
-    var shiftX = e.pageX - pinCoords.left;
-    var rightEdge = filter.offsetWidth - pinHandle.offsetWidth - 20;
-    var filterCoords = getCoords(filter);
-
-    function onMouseMove(evt) {
-      evt.preventDefault();
-      var newLeft = evt.pageX - shiftX - filterCoords.left;
-
-      if (newLeft < 0) {
-        newLeft = 0;
-      }
-
-      if (newLeft > rightEdge) {
-        newLeft = rightEdge;
-      }
-
-      pinHandle.style.left = newLeft + 'px';
-      filterBar.style.width = newLeft + 'px';
-      rangeInput.value = parseInt((newLeft * 100) / rightEdge, 10);
-
-      switch (window.effect) {
-        case 'effect-chrome':
-          rangeInput.value = rangeInput.value / 100;
-          images.style.filter = 'grayscale(' + rangeInput.value + ')';
-          break;
-
-        case 'effect-sepia':
-          rangeInput.value = rangeInput.value / 100;
-          images.style.filter = 'sepia(' + rangeInput.value + ')';
-          break;
-
-        case 'effect-marvin':
-          images.style.filter = 'invert(' + rangeInput.value + '%)';
-          break;
-
-        case 'effect-phobos':
-          rangeInput.value = parseFloat(rangeInput.value / 20, 10).toFixed(1);
-          images.style.filter = 'blur(' + rangeInput.value + 'px)';
-          break;
-
-        case 'effect-heat':
-          rangeInput.value = parseFloat(rangeInput.value / 33, 10).toFixed(1);
-          images.style.filter = 'brightness(' + rangeInput.value + ')';
-          break;
-      }
-    }
-
-    function onMouseUp(upEvt) {
-      upEvt.preventDefault();
-
-      filter.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    }
-
-    filter.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-
-  });
 })();
+
