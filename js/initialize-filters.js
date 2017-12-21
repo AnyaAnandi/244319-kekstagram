@@ -2,6 +2,11 @@
 
 (function () {
 
+  window.filter = document.querySelector('.upload-effect-level');
+  var pinHandle = document.querySelector('.upload-effect-level-pin');
+  var filterBar = document.querySelector('.upload-effect-level-val');
+  var rangeInput = document.querySelector('.upload-effect-level-value');
+
   function getCoords(elem) {
     var box = elem.getBoundingClientRect();
 
@@ -12,43 +17,65 @@
   }
 
   window.initializeFilters = {
-    filters: function (pin, fil, bar, val) {
+    onFiltersChange: function (filterElement, changeFilter) {
 
-      pin.addEventListener('mousedown', function (e) {
-        e.preventDefault();
-        var pinCoords = getCoords(pin);
-        var shiftX = e.pageX - pinCoords.left;
-        var rightEdge = fil.offsetWidth - pin.offsetWidth - 20;
-        var filterCoords = getCoords(fil);
+      filterElement.addEventListener('click', function (e) {
 
-        function onMouseMove(evt) {
+        window.effect = e.target.id.replace('upload-', '');
+
+
+        window.images.classList.add('window.effect');
+        pinHandle.style.left = 100 + '%';
+        filterBar.style.width = 100 + '%';
+        rangeInput.value = 100;
+
+        changeFilter(rangeInput);
+
+        if (window.effect !== 'effect-none') {
+          window.filter.classList.remove('hidden');
+        } else {
+          window.filter.classList.add('hidden');
+        }
+
+        // применение ползунка //
+
+        pinHandle.addEventListener('mousedown', function (evt) {
           evt.preventDefault();
-          var newLeft = evt.pageX - shiftX - filterCoords.left;
+          var pinCoords = getCoords(pinHandle);
+          var shiftX = evt.pageX - pinCoords.left;
+          var filterCoords = getCoords(window.filter);
 
-          if (newLeft < 0) {
-            newLeft = 0;
+          function onMouseMove(event) {
+            event.preventDefault();
+            var newLeft = event.pageX - shiftX - filterCoords.left;
+
+            if (newLeft < 0) {
+              newLeft = 0;
+            }
+            var rightEdge = window.filter.offsetWidth - pinHandle.offsetWidth - 20;
+            if (newLeft > rightEdge) {
+              newLeft = rightEdge;
+            }
+
+            pinHandle.style.left = newLeft + 'px';
+            filterBar.style.width = newLeft + 'px';
+
+            rangeInput.value = parseInt((newLeft * 100) / rightEdge, 10);
+
+            changeFilter(rangeInput);
           }
 
-          if (newLeft > rightEdge) {
-            newLeft = rightEdge;
+          function onMouseUp(upEvt) {
+            upEvt.preventDefault();
+
+            window.filter.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
           }
 
-          pin.style.left = newLeft + 'px';
-          bar.style.width = newLeft + 'px';
-          val.value = parseInt((newLeft * 100) / rightEdge, 10);
+          window.filter.addEventListener('mousemove', onMouseMove);
+          window.document.addEventListener('mouseup', onMouseUp);
 
-          window.filtersStyle.styles(val);
-
-        }
-
-        function onMouseUp(upEvt) {
-          upEvt.preventDefault();
-          fil.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
-        }
-
-        fil.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        });
       });
     }
   };

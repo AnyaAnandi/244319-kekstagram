@@ -5,10 +5,10 @@
   var uploadFileFormClose = document.querySelector('.upload-form-cancel');
 
   function closeUploadForm() {
-    resetImageFilter();
-    window.initializeScale.resetResizeValue();
-    images.style.filter = 'none';
     uploadFileForm.classList.add('hidden');
+    resetResizeValue();
+    resetImageFilter();
+    window.images.style.filter = 'none';
   }
 
   function onUploadFileFormClose(evt) {
@@ -20,6 +20,7 @@
   uploadFileFeeld.addEventListener('change', function (event) {
     uploadFileForm.classList.remove('hidden');
     event.stopPropagation();
+    window.filter.classList.add('hidden');
   });
 
   document.addEventListener('keydown', function (e) {
@@ -27,9 +28,9 @@
       closeUploadForm();
       hashtags.classList.remove('red');
       form.reset();
-      window.initializeScale.resetResizeValue();
+      resetResizeValue();
       resetImageFilter();
-      images.style.filter = 'none';
+      window.images.style.filter = 'none';
     }
   });
 
@@ -44,7 +45,7 @@
   uploadFileFormClose.addEventListener('click', closeUploadForm);
   uploadFileFormClose.addEventListener('keydown', onUploadFileFormClose);
 
-  var images = document.querySelector('.effect-image-preview');
+  window.images = document.querySelector('.effect-image-preview');
   var effects = document.querySelector('.upload-effect');
 
   function clearClassList(image) {
@@ -52,41 +53,63 @@
         'effect-phobos', 'effect-heat');
   }
 
-  var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
-    'effect-phobos', 'effect-heat'];
+  //  var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
+  //    'effect-phobos', 'effect-heat'];
 
-  effects.addEventListener('click', function (e) {
-    window.effect = e.target.id.replace('upload-', '');
 
-    if (effectsClasses.indexOf(window.effect) !== -1) {
-      clearClassList(images);
-      images.classList.add(window.effect);
-      pinHandle.style.left = 0;
-      filterBar.style.width = 0;
-      rangeInput.value = 0;
-      images.style.filter = 'none';
+  window.initializeFilters.onFiltersChange(effects, changeFiltersStyle);
 
-      if (window.effect !== 'effect-none') {
-        filter.classList.remove('hidden');
-      } else {
-        filter.classList.add('hidden');
-      }
-    }
-  });
+  function resetResizeValue() {
+    scaleImage(defaultResizeValue);
+  }
 
   var scalePicture = document.querySelector('.upload-resize-controls');
   window.reducePicture = document.querySelector('.upload-resize-controls-button-dec');
   window.increasePicture = document.querySelector('.upload-resize-controls-button-inc');
   window.resizeValue = document.querySelector('.upload-resize-controls-value');
+  var defaultResizeValue = 100;
 
+  // callback scale//
+  function scaleImage(val) {
+    window.images.style.transform = 'scale(' + val / 100 + ')';
+  }
 
-  window.scaleImage = {
-    scale: function (val) {
-      images.style.transform = 'scale(' + val / 100 + ')';
+  window.initializeScale.scale(scalePicture, scaleImage);
+
+  // callback  filter //
+
+  function changeFiltersStyle(val) {
+    clearClassList(window.images);
+    switch (window.effect) {
+      case 'effect-none':
+        window.images.style.filter = 'none';
+        break;
+
+      case 'effect-chrome':
+        val.value = val.value / 100;
+        window.images.style.filter = 'grayscale(' + val.value + ')';
+        break;
+
+      case 'effect-sepia':
+        val.value = val.value / 100;
+        window.images.style.filter = 'sepia(' + val.value + ')';
+        break;
+
+      case 'effect-marvin':
+        window.images.style.filter = 'invert(' + val.value + '%)';
+        break;
+
+      case 'effect-phobos':
+        val.value = parseFloat(val.value / 20, 10).toFixed(1);
+        window.images.style.filter = 'blur(' + val.value + 'px)';
+        break;
+
+      case 'effect-heat':
+        val.value = parseFloat(val.value / 33, 10).toFixed(1);
+        window.images.style.filter = 'brightness(' + val.value + ')';
+        break;
     }
-  };
-
-  window.initializeScale.scale(scalePicture);
+  }
 
   var hashtags = document.querySelector('.upload-form-hashtags');
 
@@ -129,51 +152,11 @@
     hashtags.classList.remove('red');
   });
 
-  // ползунок
-
   function resetImageFilter() {
-    clearClassList(images);
-    images.classList.add('effect-none');
-    filter.classList.add('hidden');
+    clearClassList(window.images);
+    window.images.classList.add('effect-none');
+    window.filter.classList.add('hidden');
   }
-
-  var filter = document.querySelector('.upload-effect-level');
-  var pinHandle = document.querySelector('.upload-effect-level-pin');
-  var filterBar = document.querySelector('.upload-effect-level-val');
-  var rangeInput = document.querySelector('.upload-effect-level-value');
-  filter.classList.add('hidden');
-
-  window.filtersStyle = {
-    styles: function (val) {
-      switch (window.effect) {
-        case 'effect-chrome':
-          val.value = val.value / 100;
-          images.style.filter = 'grayscale(' + val.value + ')';
-          break;
-
-        case 'effect-sepia':
-          val.value = val.value / 100;
-          images.style.filter = 'sepia(' + val.value + ')';
-          break;
-
-        case 'effect-marvin':
-          images.style.filter = 'invert(' + val.value + '%)';
-          break;
-
-        case 'effect-phobos':
-          val.value = parseFloat(val.value / 20, 10).toFixed(1);
-          images.style.filter = 'blur(' + val.value + 'px)';
-          break;
-
-        case 'effect-heat':
-          val.value = parseFloat(val.value / 33, 10).toFixed(1);
-          images.style.filter = 'brightness(' + val.value + ')';
-          break;
-      }
-    }
-  };
-
-  window.initializeFilters.filters(pinHandle, filter, filterBar, rangeInput);
 
   var submitButton = document.querySelector('#upload-submit');
   var form = document.querySelector('.upload-form');
@@ -188,9 +171,9 @@
     form.submit();
     hashtag.classList.remove('red');
     form.reset();
-    window.initializeScale.resetResizeValue();
+    resetResizeValue();
     resetImageFilter();
-    images.style.filter = 'none';
+    window.images.style.filter = 'none';
   }
 
   submitButton.addEventListener('click', function () {
@@ -204,3 +187,4 @@
   });
 
 })();
+
