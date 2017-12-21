@@ -6,7 +6,7 @@
 
   function closeUploadForm() {
     uploadFileForm.classList.add('hidden');
-    window.initializeScale.resetResizeValue();
+    resetResizeValue();
     resetImageFilter();
     images.style.filter = 'none';
   }
@@ -27,7 +27,7 @@
       closeUploadForm();
       hashtags.classList.remove('red');
       form.reset();
-      window.initializeScale.resetResizeValue();
+      resetResizeValue();
       resetImageFilter();
       images.style.filter = 'none';
     }
@@ -61,10 +61,40 @@
     if (effectsClasses.indexOf(window.effect) !== -1) {
       clearClassList(images);
       images.classList.add(window.effect);
-      pinHandle.style.left = 0;
-      filterBar.style.width = 0;
-      rangeInput.value = 0;
-      images.style.filter = 'none';
+      pinHandle.style.left = 100 + '%';
+      filterBar.style.width = 100 + '%';
+      rangeInput.value = 100;
+
+      switch (window.effect) {
+        case 'effect-none':
+          images.style.filter = 'none';
+          break;
+
+        case 'effect-chrome':
+          rangeInput.value = parseInt(rangeInput.value, 10) / 100;
+          images.style.filter = 'grayscale(' + rangeInput.value + ')';
+          break;
+
+        case 'effect-sepia':
+          rangeInput.value = parseInt(rangeInput.value, 10) / 100;
+          images.style.filter = 'sepia(' + rangeInput.value + ')';
+          break;
+
+        case 'effect-marvin':
+          rangeInput.value = 100;
+          images.style.filter = 'invert(' + rangeInput.value + '%)';
+          break;
+
+        case 'effect-phobos':
+          rangeInput.value = parseFloat(rangeInput.value / 20, 10).toFixed(1);
+          images.style.filter = 'blur(' + rangeInput.value + 'px)';
+          break;
+
+        case 'effect-heat':
+          rangeInput.value = parseFloat(rangeInput.value / 33, 10).toFixed(1);
+          images.style.filter = 'brightness(' + rangeInput.value + ')';
+          break;
+      }
 
       if (window.effect !== 'effect-none') {
         filter.classList.remove('hidden');
@@ -74,18 +104,22 @@
     }
   });
 
+  function resetResizeValue() {
+    scaleImage(defaultResizeValue);
+  }
+
   var scalePicture = document.querySelector('.upload-resize-controls');
   window.reducePicture = document.querySelector('.upload-resize-controls-button-dec');
   window.increasePicture = document.querySelector('.upload-resize-controls-button-inc');
   window.resizeValue = document.querySelector('.upload-resize-controls-value');
+  var defaultResizeValue = 100;
 
-  window.scaleImage = {
-    scale: function (val) {
-      images.style.transform = 'scale(' + val / 100 + ')';
-    }
-  };
+  // callback //
+  function scaleImage(val) {
+    images.style.transform = 'scale(' + val / 100 + ')';
+  }
 
-  window.initializeScale.scale(scalePicture);
+  window.initializeScale.scale(scalePicture, scaleImage);
 
   var hashtags = document.querySelector('.upload-form-hashtags');
 
@@ -187,7 +221,7 @@
     form.submit();
     hashtag.classList.remove('red');
     form.reset();
-    window.initializeScale.resetResizeValue();
+    resetResizeValue();
     resetImageFilter();
     images.style.filter = 'none';
   }
