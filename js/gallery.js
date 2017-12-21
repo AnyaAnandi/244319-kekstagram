@@ -2,16 +2,23 @@
 (function () {
 
   var picturesGallary = document.querySelector('.pictures');
+  var gallerySize = 25;
 
-  window.pictures = [];
+  // window.pictures = [];
 
-  window.data.getPicturesArray(window.pictures, window.urls, window.comments);
+  // window.data.getPicturesArray(window.pictures, window.urls, window.comments);
 
-  var fragment = document.createDocumentFragment();
-  for (var j = 0; j < window.pictures.length; j++) {
-    fragment.appendChild(window.picture.render(window.pictures[j]));
+  function getPictures(pictures) {
+    var fragment = document.createDocumentFragment();
+    for (var j = 0; j < gallerySize; j++) {
+      fragment.appendChild(window.picture.render(pictures[j]));
+    }
+    picturesGallary.appendChild(fragment);
+
+    window.previewInit.onPreviewImg(pictures);
   }
-  picturesGallary.appendChild(fragment);
+
+  window.backend.load(getPictures);
 
 })();
 

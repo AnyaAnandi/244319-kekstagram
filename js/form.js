@@ -53,10 +53,6 @@
         'effect-phobos', 'effect-heat');
   }
 
-  //  var effectsClasses = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin',
-  //    'effect-phobos', 'effect-heat'];
-
-
   window.initializeFilters.onFiltersChange(effects, changeFiltersStyle);
 
   function resetResizeValue() {
@@ -110,6 +106,13 @@
         break;
     }
   }
+
+  window.filter = document.querySelector('.upload-effect-level');
+  window.pinHandle = document.querySelector('.upload-effect-level-pin');
+  window.filterBar = document.querySelector('.upload-effect-level-val');
+  window.rangeInput = document.querySelector('.upload-effect-level-value');
+
+  window.initializeFilters.onPinChange(window.pinHandle, changeFiltersStyle);
 
   var hashtags = document.querySelector('.upload-form-hashtags');
 
