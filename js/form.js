@@ -173,7 +173,7 @@
       return;
     }
 
-    form.submit();
+    // form.submit();
 
     window.backend.save(new FormData(form), errorHandler, function () {
       uploadFileForm.classList.add('hidden');
@@ -187,12 +187,12 @@
   }
 
   submitButton.addEventListener('click', function () {
-    showErrorOrSubmit(hashtags);
+    showErrorOrSubmit(hashtags, event);
   });
 
   submitButton.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.ENTER_KEYCODE) {
-      showErrorOrSubmit(hashtags);
+      showErrorOrSubmit(hashtags, event);
     }
   });
 
