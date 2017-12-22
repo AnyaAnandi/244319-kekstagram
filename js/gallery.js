@@ -1,6 +1,7 @@
 'use strict';
 (function () {
 
+
   var picturesGallary = document.querySelector('.pictures');
   var gallerySize = 25;
 
@@ -15,10 +16,18 @@
     }
     picturesGallary.appendChild(fragment);
 
-    window.previewInit.onPreviewImg(pictures);
+    window.galleryOverlay = document.querySelector('.gallery-overlay');
+    var pictureElements = document.querySelectorAll('.picture');
+    window.pictureClose = document.querySelector('.gallery-overlay-close');
+
+    window.previewInit.onPreviewImg(pictureElements, pictures);
   }
 
-  window.backend.load(getPictures);
+  function errorHandler(errorMessage) {
+    window.canvas.messageError(errorMessage);
+  }
+
+  window.backend.load(getPictures, errorHandler);
 
 })();
 

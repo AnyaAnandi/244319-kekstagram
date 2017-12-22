@@ -164,14 +164,21 @@
   var submitButton = document.querySelector('#upload-submit');
   var form = document.querySelector('.upload-form');
 
-  function showErrorOrSubmit(hashtag) {
+
+  function showErrorOrSubmit(hashtag, evt) {
     var error = validate(hashtag.value);
     if (error) {
       hashtags.setCustomValidity(error);
       hashtags.classList.add('red');
       return;
     }
+
     form.submit();
+
+    window.backend.save(new FormData(form), errorHandler, function () {
+      uploadFileForm.classList.add('hidden');
+    });
+    evt.preventDefault();
     hashtag.classList.remove('red');
     form.reset();
     resetResizeValue();
@@ -188,6 +195,10 @@
       showErrorOrSubmit(hashtags);
     }
   });
+
+  function errorHandler(errorMessage) {
+    window.canvas.messageError(errorMessage);
+  }
 
 })();
 
